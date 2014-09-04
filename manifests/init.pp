@@ -32,15 +32,24 @@ class repodeploy(
       $provider = 'git'
     }
 
+    if $repos[$name]['revision'] {
+      $revision = $repos[$name]['revision']
+    } else {
+      $revision = undef
+    }
+
+
     if $repos[$name]['source'] {
       $source = $repos[$name]['source']
     } else {
       fail('You need to provide a source as parameter!')
     }
+
     vcsrepo { $name:
       ensure   => present,
       provider => $provider,
       source   => $source,
+      revision => $revision,
     }
 
     if $repos[$name]['include'] {
