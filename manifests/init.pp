@@ -67,7 +67,8 @@ class repodeploy(
   if $repos {
     $repos_keys = keys($repos)
     deploy_repo { $repos_keys:
-      repos => $repos,
+      repos             => $repos,
+      include_base_path => $include_base_path,
     }
   }
 }
