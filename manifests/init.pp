@@ -60,7 +60,20 @@ class repodeploy(
         source            => $name,
         include_base_path => $include_base_path,
         require           => Vcsrepo[$name],
-      } 
+      }
+
+      exec{"mr register ${repos[$name]['include']}":
+        require     => Package['myrepos'],
+        subscribe   => Copy_directory["$repos[$name]['include']"],
+        refreshonly => true,
+        }
+
+    }
+    else {
+      exec{"mr register $name":
+        subscribe   => Vcsrepo[$name],
+        refreshonly => true,
+      }
     }
   }
 
@@ -71,4 +84,6 @@ class repodeploy(
       include_base_path => $include_base_path,
     }
   }
+
+  package{'myrepos': }
 }
