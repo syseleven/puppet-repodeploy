@@ -61,18 +61,13 @@ class repodeploy(
         include_base_path => $include_base_path,
         require           => Vcsrepo[$name],
       }
-
-      exec{"mr register ${repos[$name]['include']}":
-        require     => Package['myrepos'],
-        subscribe   => Copy_directory["$repos[$name]['include']"],
-        refreshonly => true,
-        }
-
     }
     else {
       exec{"mr register $name":
+        require     => Package['myrepos'],
         subscribe   => Vcsrepo[$name],
         refreshonly => true,
+        path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
       }
     }
   }
