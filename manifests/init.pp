@@ -62,14 +62,6 @@ class repodeploy(
         require           => Vcsrepo[$name],
       }
     }
-    else {
-      exec{"mr register $name":
-        require     => Package['myrepos'],
-        subscribe   => Vcsrepo[$name],
-        refreshonly => true,
-        path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-      }
-    }
   }
 
   if $repos {
@@ -81,4 +73,13 @@ class repodeploy(
   }
 
   package{'myrepos': }
+
+  # Create mrconfig entries for all repositories.
+
+  file{'/root/.mrconfig':
+    ensure  => file,
+    mode    => '0600',
+    content => template("$module_name/mrconfig.erb"),
+  }
+
 }

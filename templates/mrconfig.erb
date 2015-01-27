@@ -1,0 +1,5 @@
+<% @repos.each_pair do |dir,repo| %>
+[<%= dir %>]
+checkout = git clone '<%= repo['source'] %>' '<%= dir %>'
+
+<% end %>
