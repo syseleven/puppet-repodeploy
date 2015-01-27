@@ -7,7 +7,7 @@
 #   $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
 #
 class repodeploy(
-  $repos = hiera('repodeploy::repos', false),
+  $repos = hiera_hash('repodeploy::repos', false),
   $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
 ) {
   define copy_directory(
