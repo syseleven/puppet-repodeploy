@@ -7,9 +7,10 @@
 #   $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
 #
 class repodeploy(
-  $repos = hiera('repodeploy::repos', false),
   $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
 ) {
+  $repos = hiera_hash('repodeploy::repos', {})
+
   define copy_directory(
     $source,
     $include_base_path = undef,
@@ -60,7 +61,7 @@ class repodeploy(
         source            => $name,
         include_base_path => $include_base_path,
         require           => Vcsrepo[$name],
-      } 
+      }
     }
   }
 
@@ -71,4 +72,15 @@ class repodeploy(
       include_base_path => $include_base_path,
     }
   }
+
+  ensure_packages(['myrepos'])
+
+  # Create mrconfig entries for all repositories.
+
+  file{'/root/.mrconfig':
+    ensure  => file,
+    mode    => '0600',
+    content => template("$module_name/mrconfig.erb"),
+  }
+
 }
