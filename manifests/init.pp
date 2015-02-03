@@ -73,7 +73,7 @@ class repodeploy(
     }
   }
 
-  package{'myrepos': }
+  ensure_packages(['myrepos'])
 
   # Create mrconfig entries for all repositories.
 
