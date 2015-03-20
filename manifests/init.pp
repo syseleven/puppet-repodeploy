@@ -27,6 +27,13 @@ class repodeploy(
     $repos,
     $include_base_path = undef,
   ) {
+    if $repos[$name]['ensure'] {
+      $ensure = $repos[$name]['ensure']
+    } else {
+      $ensure = 'present'
+    }
+
+
     if $repos[$name]['provider'] {
       $provider = $repos[$name]['provider']
     } else {
@@ -47,7 +54,7 @@ class repodeploy(
     }
 
     vcsrepo { $name:
-      ensure   => present,
+      ensure   => $ensure,
       provider => $provider,
       source   => $source,
       revision => $revision,
