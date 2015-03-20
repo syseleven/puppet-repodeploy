@@ -1,4 +1,4 @@
-# repodeploy
+# repodeploy: Hash wrapper around vcsrepo with mr(1) configuration generator.
 ## Sample Usage
 hiera:
 ```
