@@ -46,8 +46,10 @@ class repodeploy(
       $revision = undef
     }
 
+    $post_checkout_hook = "$name/.git/hooks/post-checkout"
+
     if $repos[$name]['post-checkout'] {
-      $post_checkout = $repos[$name][$post_checkout]
+      $post_checkout = $repos[$name]['post-checkout']
     } else {
       $post_checkout = undef
     }
@@ -58,16 +60,16 @@ class repodeploy(
       fail('You need to provide a source as parameter!')
     }
 
+    if $post_checkout {
     vcsrepo { $name:
       ensure   => $ensure,
       provider => $provider,
       source   => $source,
       revision => $revision,
-      notify   => File["$name/.git/hooks/post-checkout"],
+      notify   => File[$post_checkout_hook],
     }
 
-    if $post_checkout {
-    # Install a post-checkout-hook for building documentation...
+    # Install a post-checkout hook for building documentation...
 
     file { "$name/.git/hooks/post-checkout":
       ensure  => file,
@@ -81,6 +83,21 @@ class repodeploy(
       subscribe   => File["$name/.git/hooks/post-checkout"],
       refreshonly => true,
     }
+  } else {
+      vcsrepo { $name:
+          ensure   => $ensure,
+          provider => $provider,
+          source   => $source,
+          revision => $revision,
+          # Remove hook before checkout if it has been deconfigured:
+          require  => File[$post_checkout_hook],
+        }
+
+        # Remove post-checkout hook if one exists.
+
+        file { $post_checkout_hook:
+          ensure  => absent,
+          }
   }
 
 
