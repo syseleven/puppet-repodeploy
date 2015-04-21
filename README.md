@@ -4,10 +4,14 @@ hiera:
 ```
 repodeploy::repos:
   '/opt/puppet':
-    source: git@github.com:puppetlabs/puppet.git
+    source: git@github.com:syseleven/cloudstrap-utils.git
     provider: git
     include:
       - docs
+    post-checkout:
+      #!/bin/sh
+      repo="<%= @name %>"
+      ln -s "${repo}/bin/*" /usr/local/bin
 ```
 
 ## Requirements
