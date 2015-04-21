@@ -46,6 +46,11 @@ class repodeploy(
       $revision = undef
     }
 
+    if $repos[$name]['post-checkout'] {
+      $post_checkout = $repos[$name][$post_checkout]
+    } else {
+      $post_checkout = undef
+    }
 
     if $repos[$name]['source'] {
       $source = $repos[$name]['source']
@@ -58,7 +63,26 @@ class repodeploy(
       provider => $provider,
       source   => $source,
       revision => $revision,
+      notify   => File["$name/.git/hooks/post-checkout"],
     }
+
+    if $post_checkout {
+    # Install a post-checkout-hook for building documentation...
+
+    file { "$name/.git/hooks/post-checkout":
+      ensure  => file,
+      mode    => '0755',
+      content => inline_template($post_checkout),
+      }
+
+    # ...and ensure it gets run upon the repository's initial checkout
+
+    exec { "$name/.git/hooks/post-checkout":
+      subscribe   => File["$name/.git/hooks/post-checkout"],
+      refreshonly => true,
+    }
+  }
+
 
     if $repos[$name]['include'] {
       file {$include_base_path:
