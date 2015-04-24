@@ -71,16 +71,19 @@ class repodeploy(
 
     # Install a post-checkout hook for building documentation...
 
-    file { "$name/.git/hooks/post-checkout":
+    file { $post_checkout_hook:
       ensure  => file,
       mode    => '0755',
       content => inline_template($post_checkout),
       }
 
-    # ...and ensure it gets run upon the repository's initial checkout
+    # ...and ensure it gets run, despite vcsrepo's `git reset --hard` (os-569):
 
-    exec { "$name/.git/hooks/post-checkout":
-      subscribe   => File["$name/.git/hooks/post-checkout"],
+    exec { "run $post_checkout_hook":
+      path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+      provider    => 'shell',
+      command     => "cd ${name}; git checkout",
+      subscribe   => Vcsrepo[$name],
       refreshonly => true,
     }
   } else {
