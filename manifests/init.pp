@@ -43,7 +43,11 @@ class repodeploy(
     if $repos[$name]['revision'] {
       $revision = $repos[$name]['revision']
     } else {
-      $revision = undef
+      if $provider == 'git' {
+        $revision = 'master' # os-568: fixes ensure => latest with empty revision.
+      } else {
+        $revision = undef
+      }
     }
 
     $post_checkout_hook = "$name/.git/hooks/post-checkout"
