@@ -87,7 +87,7 @@ class repodeploy(
       path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
       provider    => 'shell',
       command     => "cd ${name}; git checkout",
-      subscribe   => Vcsrepo[$name],
+      subscribe   => [ Vcsrepo[$name], File[$post_checkout_hook] ],
       refreshonly => true,
     }
   } else {
