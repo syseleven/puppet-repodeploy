@@ -1,6 +1,7 @@
 # repodeploy: Hash wrapper around vcsrepo with mr(1) configuration generator.
-## Sample Usage
-hiera:
+
+## Sample Usage (Hiera configuration)
+
 ```
 repodeploy::repos:
   '/opt/puppet':
