@@ -17,7 +17,7 @@
 #
 # ensure (optional):: 'String' An ensure value to be passed through to vcsrepo. Valid values are 'present', 'latest' and 'absent'. Defaults to 'present' if unset.
 #
-# include (optional):: 'Array' A list of directories from this repository to copy to {#include_base_path}.
+# include (optional):: 'Array' A list of directories from this repository to copy to 'include_base_path'.
 #
 # provider (optional):: 'String' The vcsrepo provider to retrieve this repository with (defaults to 'git').
 #
