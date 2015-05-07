@@ -1,10 +1,51 @@
-# Class repodeploy
+# This class uses the vcsrepo module to deploy repositories. Unlike vcsrepo it
+# is driven by a hash, i.e. its $repos parameter can include an arbitrary
+# number of repositories. Other features include a per-repository post-checkout
+# hook and a mechanism for extracting arbitrary directories from repositories.
+# As an added benefit it will install mr(1) and generate a ~/.mrconfig
+# containing all repositories managed by repodeploy.
+# 
+# The hash of repositories must be supplied through the Hiera key
+# `repodeploy::repos` and can not be passed to repodeploy directly. A regular
+# hash merge (not a deep merge) will be performed on this Hiera key.
+# 
+# `repodeploy::repos` is keyed by file system path (i.e. the directory to clone
+# the repository in question into). Its values are themselves hashes with the
+# following keys:
+# 
+# source:: The Repository's source URL.
 #
-# This class deploys repos by the vcsrepo module but configureable via a hash
+# ensure (optional):: 'String' An ensure value to be passed through to vcsrepo. Valid values are 'present', 'latest' and 'absent'. Defaults to 'present' if unset.
 #
-# Parameters:
-#   $repos = hiera('repodeploy::repos', false),
-#   $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
+# include (optional):: 'Array' A list of directories from this repository to copy to 'include_base_path'.
+#
+# provider (optional):: 'String' The vcsrepo provider to retrieve this repository with (defaults to 'git').
+#
+# post-checkout (optional):: 'String' A post-checkout hook for this repository.
+# This hook will be run both if the repository is updated and if the hook's
+# contents change. By default this is empty.
+#
+# revision (optional):: 'String' The revision to check out (defaults to 'master').
+#
+# @example
+#    repodeploy::repos:
+#      '/opt/puppet-modules/repodeploy':
+#        source: https://github.com/syseleven/puppet-repodeploy.git
+#        provider: git
+#      '/opt/scripts/cloudstrap-utils':
+#        source: git@gitlab.syseleven.de:cloudstrap/cloudstrap-utils.git
+#        provider: git
+#        post-checkout: |
+#          #!/bin/sh
+#          repo="<%= @name %>"
+#          for i in ${repo}/bin/*
+#            do
+#              if [ ! -e /usr/local/bin/$(basename $i) ]; then
+#                ln -s $i /usr/local/bin
+#              fi
+#            done
+#
+# @param [String] include_base_path A directory to copy repository subdirectories selected using a repository's include array to.
 #
 class repodeploy(
   $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
