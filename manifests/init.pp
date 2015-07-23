@@ -150,8 +150,10 @@ class repodeploy(
 
 
     if $repos[$name]['include'] {
-      file {$include_base_path:
-        ensure => directory,
+      if ! defined(File[$include_base_path]) {
+        file {$include_base_path:
+          ensure => directory,
+        }
       }
       copy_directory { $repos[$name]['include']:
         source            => $name,
