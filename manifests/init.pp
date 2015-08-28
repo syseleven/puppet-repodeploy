@@ -48,7 +48,7 @@
 # @param [String] include_base_path A directory to copy repository subdirectories selected using a repository's include array to.
 #
 class repodeploy(
-  $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules-vcsrepo'),
+  $include_base_path = hiera('repodeploy::include_base_path', '/opt/puppet-modules'),
 ) {
   $repos = hiera_hash('repodeploy::repos', {})
 
